@@ -1,117 +1,151 @@
 package com.mydgnbot.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mydgnbot.domain.BotState
 import com.mydgnbot.ui.components.ControlButtons
-import com.mydgnbot.ui.components.LiveStatusChip
 import com.mydgnbot.ui.components.WalletChip
+import com.mydgnbot.ui.components.WaitingIndicator
+import com.mydgnbot.ui.components.LiveStatusChip
+import com.mydgnbot.ui.viewmodel.BotViewModel
+
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
 
-    Scaffold(
+    botViewModel: BotViewModel = viewModel()
 
-        topBar = {
+) {
 
-            TopAppBar(
+    val state by botViewModel.state.collectAsState()
 
-                title = {
 
-                    androidx.compose.foundation.layout.Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+    Column(
 
-                        Text(
-                            text = "MyDGN Bot",
-                            fontWeight = FontWeight.Bold
-                        )
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
 
-                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+        horizontalAlignment = Alignment.CenterHorizontally
 
-                        LiveStatusChip()
+    ) {
 
-                    }
 
-                },
+        LiveStatusChip(
+            state = state
+        )
 
-                navigationIcon = {
 
-                    IconButton(
-                        onClick = {}
-                    ) {
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
 
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu"
-                        )
 
-                    }
+        ControlButtons(
 
-                }
+            onStart = {
+                botViewModel.startBot()
+            },
 
-            )
+            onStop = {
+                botViewModel.stopBot()
+            }
 
-        }
+        )
 
-    ) { padding ->
 
-        Column(
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
 
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(20.dp),
 
-            horizontalAlignment = Alignment.CenterHorizontally
+        WalletChip()
 
-        ) {
 
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(
+            modifier = Modifier.height(50.dp)
+        )
 
-            ControlButtons()
 
-            Spacer(modifier = Modifier.height(20.dp))
+        when(state) {
 
-            WalletChip()
 
-            Spacer(modifier = Modifier.height(48.dp))
+            BotState.Idle -> {
 
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                modifier = Modifier.height(72.dp)
-            )
+                Text(
+                    text = "Bot stopped"
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            }
 
-            Text(
-                text = "Waiting for player...",
-                style = MaterialTheme.typography.headlineSmall
-            )
 
-            Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "The bot is monitoring MyDGN.\nA player will appear here instantly.",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            BotState.Monitoring -> {
+
+
+                WaitingIndicator()
+
+
+                Spacer(
+                    modifier = Modifier.height(20.dp)
+                )
+
+
+                Text(
+                    text = "Waiting for player..."
+                )
+
+            }
+
+
+
+            BotState.PlayerFound -> {
+
+
+                Text(
+                    text = "Player Found!"
+                )
+
+
+            }
+
+
+
+            BotState.AwaitingPurchase -> {
+
+                Text(
+                    text = "Awaiting purchase"
+
+                )
+
+            }
+
+
+
+            BotState.PurchaseCompleted -> {
+
+                Text(
+                    text = "Purchase completed"
+
+                )
+
+            }
+
+
+
+            BotState.Offline -> {
+
+                Text(
+                    text = "Connection lost"
+
+                )
+
+            }
 
         }
 
