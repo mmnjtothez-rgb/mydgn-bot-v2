@@ -7,8 +7,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
+
 @Composable
-fun WalletChip() {
+fun WalletChip(
+    balance: String = "$12.48"
+) {
 
     AssistChip(
 
@@ -17,15 +20,18 @@ fun WalletChip() {
         leadingIcon = {
 
             Icon(
-                Icons.Default.AccountBalanceWallet,
-                null
+
+                imageVector = Icons.Default.AccountBalanceWallet,
+
+                contentDescription = "Wallet"
+
             )
 
         },
 
         label = {
 
-            Text("$12.48")
+            Text(balance)
 
         }
 
