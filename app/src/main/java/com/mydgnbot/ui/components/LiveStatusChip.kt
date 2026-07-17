@@ -1,40 +1,49 @@
 package com.mydgnbot.ui.components
 
+
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.mydgnbot.domain.BotState
 
-
-enum class BotStatus {
-
-    MONITORING,
-    PLAYER_FOUND,
-    AWAITING_PURCHASE,
-    OFFLINE
-
-}
 
 
 @Composable
 fun LiveStatusChip(
-    status: BotStatus = BotStatus.MONITORING
+
+    state: BotState = BotState.Idle
+
 ) {
 
-    val label = when(status) {
 
-        BotStatus.MONITORING ->
+    val text = when(state) {
+
+
+        BotState.Idle ->
+            "⚪ Stopped"
+
+
+        BotState.Monitoring ->
             "🟢 Monitoring"
 
-        BotStatus.PLAYER_FOUND ->
+
+        BotState.PlayerFound ->
             "🔵 Player Found"
 
-        BotStatus.AWAITING_PURCHASE ->
+
+        BotState.AwaitingPurchase ->
             "🟡 Awaiting Purchase"
 
-        BotStatus.OFFLINE ->
+
+        BotState.PurchaseCompleted ->
+            "✅ Bought"
+
+
+        BotState.Offline ->
             "🔴 Offline"
 
     }
+
 
 
     AssistChip(
@@ -43,7 +52,7 @@ fun LiveStatusChip(
 
         label = {
 
-            Text(label)
+            Text(text)
 
         }
 
