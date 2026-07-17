@@ -1,5 +1,8 @@
 package com.mydgnbot.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -8,10 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mydgnbot.domain.BotState
-import com.mydgnbot.ui.components.ControlButtons
-import com.mydgnbot.ui.components.WalletChip
-import com.mydgnbot.ui.components.WaitingIndicator
-import com.mydgnbot.ui.components.LiveStatusChip
+import com.mydgnbot.ui.components.*
 import com.mydgnbot.ui.viewmodel.BotViewModel
 
 
@@ -22,7 +22,11 @@ fun HomeScreen(
 
 ) {
 
+
     val state by botViewModel.state.collectAsState()
+
+    val player by botViewModel.player.collectAsState()
+
 
 
     Column(
@@ -36,27 +40,35 @@ fun HomeScreen(
     ) {
 
 
+
         LiveStatusChip(
             state = state
         )
 
 
+
         Spacer(
             modifier = Modifier.height(20.dp)
         )
+
 
 
         ControlButtons(
 
             onStart = {
+
                 botViewModel.startBot()
+
             },
 
             onStop = {
+
                 botViewModel.stopBot()
+
             }
 
         )
+
 
 
         Spacer(
@@ -64,22 +76,29 @@ fun HomeScreen(
         )
 
 
+
         WalletChip()
 
 
+
         Spacer(
-            modifier = Modifier.height(50.dp)
+            modifier = Modifier.height(30.dp)
         )
+
+
 
 
         when(state) {
 
 
+
             BotState.Idle -> {
 
+
                 Text(
-                    text = "Bot stopped"
+                    "Bot stopped"
                 )
+
 
             }
 
@@ -92,13 +111,14 @@ fun HomeScreen(
 
 
                 Spacer(
-                    modifier = Modifier.height(20.dp)
+                    Modifier.height(16.dp)
                 )
 
 
                 Text(
-                    text = "Waiting for player..."
+                    "Waiting for player..."
                 )
+
 
             }
 
@@ -107,8 +127,48 @@ fun HomeScreen(
             BotState.PlayerFound -> {
 
 
+
+                AnimatedVisibility(
+
+                    visible = player != null,
+
+                    enter = slideInVertically() + fadeIn()
+
+                ) {
+
+
+
+                    player?.let {
+
+
+                        PlayerCard(
+
+                            player = it,
+
+                            onBought = {
+
+                                botViewModel.boughtPlayer()
+
+                            }
+
+                        )
+
+
+                    }
+
+
+                }
+
+
+            }
+
+
+
+            BotState.PurchaseCompleted -> {
+
+
                 Text(
-                    text = "Player Found!"
+                    "✅ Purchase completed"
                 )
 
 
@@ -118,21 +178,11 @@ fun HomeScreen(
 
             BotState.AwaitingPurchase -> {
 
-                Text(
-                    text = "Awaiting purchase"
-
-                )
-
-            }
-
-
-
-            BotState.PurchaseCompleted -> {
 
                 Text(
-                    text = "Purchase completed"
-
+                    "Awaiting purchase"
                 )
+
 
             }
 
@@ -140,15 +190,19 @@ fun HomeScreen(
 
             BotState.Offline -> {
 
-                Text(
-                    text = "Connection lost"
 
+                Text(
+                    "Offline"
                 )
+
 
             }
 
+
         }
 
+
     }
+
 
 }
