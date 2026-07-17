@@ -1,18 +1,27 @@
 package com.mydgnbot.ui.screens
 
-import androidx.compose.foundation.layout
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mydgnbot.ui.components.ControlButtons
+import com.mydgnbot.ui.components.LiveStatusChip
+import com.mydgnbot.ui.components.WalletChip
 
 @Composable
 fun HomeScreen() {
@@ -25,7 +34,7 @@ fun HomeScreen() {
 
                 title = {
 
-                    Row(
+                    androidx.compose.foundation.layout.Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
@@ -34,7 +43,7 @@ fun HomeScreen() {
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
 
                         LiveStatusChip()
 
@@ -44,11 +53,13 @@ fun HomeScreen() {
 
                 navigationIcon = {
 
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {}
+                    ) {
 
                         Icon(
                             imageVector = Icons.Default.Menu,
-                            contentDescription = null
+                            contentDescription = "Menu"
                         )
 
                     }
@@ -72,7 +83,7 @@ fun HomeScreen() {
 
         ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             ControlButtons()
 
@@ -84,8 +95,8 @@ fun HomeScreen() {
 
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = null,
-                modifier = Modifier.size(72.dp)
+                contentDescription = "Search",
+                modifier = Modifier.height(72.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
