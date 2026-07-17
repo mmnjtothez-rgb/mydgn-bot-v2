@@ -8,16 +8,27 @@ import androidx.compose.runtime.Composable
 
 
 @Composable
-fun ControlButtons() {
+fun ControlButtons(
+
+    onStart: () -> Unit,
+
+    onStop: () -> Unit
+
+) {
+
 
     Row(
 
-        horizontalArrangement = Arrangement.spacedBy(12)
+        horizontalArrangement =
+        Arrangement.spacedBy(12)
 
     ) {
 
+
         OutlinedButton(
-            onClick = {}
+
+            onClick = onStart
+
         ) {
 
             Text("▶ Start")
@@ -25,13 +36,17 @@ fun ControlButtons() {
         }
 
 
+
         OutlinedButton(
-            onClick = {}
+
+            onClick = onStop
+
         ) {
 
             Text("■ Stop")
 
         }
+
 
     }
 
