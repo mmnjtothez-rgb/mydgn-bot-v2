@@ -1,9 +1,10 @@
 package com.mydgnbot.ui.components
 
 
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
 import com.mydgnbot.domain.BotState
 
 
@@ -11,36 +12,52 @@ import com.mydgnbot.domain.BotState
 @Composable
 fun LiveStatusChip(
 
-    state: BotState = BotState.Idle
+    status: BotState
 
 ) {
 
 
-    val text = when(state) {
+    val label = when (status) {
 
 
-        BotState.Idle ->
-            "⚪ Stopped"
+        BotState.Loading ->
+            "Loading"
 
 
-        BotState.Monitoring ->
-            "🟢 Monitoring"
+        BotState.Buying ->
+            "Buying"
 
 
-        BotState.PlayerFound ->
-            "🔵 Player Found"
+        BotState.Completed ->
+            "Completed"
 
 
-        BotState.AwaitingPurchase ->
-            "🟡 Awaiting Purchase"
+        BotState.Error ->
+            "Error"
 
 
-        BotState.PurchaseCompleted ->
-            "✅ Bought"
+    }
 
 
-        BotState.Offline ->
-            "🔴 Offline"
+
+    val color = when (status) {
+
+
+        BotState.Completed ->
+            Color(0xFF4CAF50)
+
+
+        BotState.Error ->
+            Color(0xFFE53935)
+
+
+        BotState.Buying ->
+            Color(0xFFFF9800)
+
+
+        BotState.Loading ->
+            Color(0xFF2196F3)
+
 
     }
 
@@ -52,10 +69,21 @@ fun LiveStatusChip(
 
         label = {
 
-            Text(text)
+            Text(
+                text = label
+            )
 
-        }
+        },
+
+        colors = AssistChipDefaults.assistChipColors(
+
+            containerColor = color.copy(
+                alpha = 0.15f
+            )
+
+        )
 
     )
+
 
 }
