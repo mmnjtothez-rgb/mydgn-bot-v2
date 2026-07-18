@@ -9,6 +9,12 @@ data class ApiPlayer(
     
     val customerID: Int,
     
+    val resourceID: Long
+    
+    val baseID: Long
+    
+    val cardValue: Int
+    
     val IsIcon: Int,
     
     val isAtMinPrice: Boolean
