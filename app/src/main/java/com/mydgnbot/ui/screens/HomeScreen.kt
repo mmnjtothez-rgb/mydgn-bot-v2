@@ -1,8 +1,5 @@
 package com.mydgnbot.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,144 +7,189 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mydgnbot.data.model.PreviewPlayer
 import com.mydgnbot.domain.BotState
-import com.mydgnbot.ui.components.*
-import com.mydgnbot.ui.viewmodel.BotViewModel
+import com.mydgnbot.ui.components.PlayerCard
+import com.mydgnbot.ui.viewmodel.HomeViewModel
 
 
 @Composable
 fun HomeScreen(
 
-    botViewModel: BotViewModel = viewModel()
+    viewModel: HomeViewModel = viewModel()
 
 ) {
 
 
-    val state by botViewModel.state.collectAsState()
-
-    val player by botViewModel.player.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
 
 
-    Column(
+    Surface(
 
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize()
 
     ) {
 
 
+        Column(
 
-        LiveStatusChip(
-            state = state
-        )
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
 
+            horizontalAlignment =
+            Alignment.CenterHorizontally
 
-
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
-
-
-        ControlButtons(
-
-            onStart = {
-
-                botViewModel.startBot()
-
-            },
-
-            onStop = {
-
-                botViewModel.stopBot()
-
-            }
-
-        )
+        ) {
 
 
-
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
+            when (uiState.botState) {
 
 
-
-        WalletChip()
-
+                BotState.Idle -> {
 
 
-        Spacer(
-            modifier = Modifier.height(30.dp)
-        )
+                    Text(
+
+                        text = "Ready to monitor",
+
+                        style =
+                        MaterialTheme.typography.headlineSmall
+
+                    )
 
 
+                    Spacer(
+                        Modifier.height(32.dp)
+                    )
 
 
-        when(state) {
+                    Button(
+
+                        onClick = {
+
+                            viewModel.startBot()
+
+                        }
+
+                    ) {
+
+                        Text("▶ Start Bot")
+
+                    }
 
 
-
-            BotState.Idle -> {
-
-
-                Text(
-                    "Bot stopped"
-                )
-
-
-            }
+                }
 
 
 
-            BotState.Monitoring -> {
+                BotState.Monitoring -> {
 
 
-                WaitingIndicator()
+                    Text(
+
+                        text = "🟢 Monitoring",
+
+                        style =
+                        MaterialTheme.typography.headlineSmall
+
+                    )
 
 
-                Spacer(
-                    Modifier.height(16.dp)
-                )
+                    Spacer(
+                        Modifier.height(40.dp)
+                    )
 
 
-                Text(
-                    "Waiting for player..."
-                )
+                    CircularProgressIndicator()
 
 
-            }
+                    Spacer(
+                        Modifier.height(20.dp)
+                    )
+
+
+                    Text(
+
+                        text =
+                        "Searching for players...",
+
+                        style =
+                        MaterialTheme.typography.bodyLarge
+
+                    )
+
+
+                    Spacer(
+                        Modifier.height(32.dp)
+                    )
+
+
+                    OutlinedButton(
+
+                        onClick = {
+
+                            viewModel.stopBot()
+
+                        }
+
+                    ) {
+
+                        Text("■ Stop Bot")
+
+                    }
+
+
+                    Spacer(
+                        Modifier.height(30.dp)
+                    )
+
+
+                    // Development only
+                    Button(
+
+                        onClick = {
+
+                            viewModel.playerFound(
+                                PreviewPlayer
+                            )
+
+                        }
+
+                    ) {
+
+                        Text(
+                            "Simulate Player Found"
+                        )
+
+                    }
+
+
+                }
 
 
 
-            BotState.PlayerFound -> {
+                BotState.PlayerFound -> {
 
 
-
-                AnimatedVisibility(
-
-                    visible = player != null,
-
-                    enter = slideInVertically() + fadeIn()
-
-                ) {
-
-
-
-                    player?.let {
+                    uiState.currentPlayer?.let { player ->
 
 
                         PlayerCard(
 
-                            player = it,
+                            player = player,
+
+                            onCancel = {
+
+                                viewModel.stopBot()
+
+                            },
+
 
                             onBought = {
 
-                                botViewModel.boughtPlayer()
+                                viewModel.purchaseCompleted()
 
                             }
 
@@ -160,40 +202,16 @@ fun HomeScreen(
                 }
 
 
-            }
+
+                else -> {
 
 
-
-            BotState.PurchaseCompleted -> {
-
-
-                Text(
-                    "✅ Purchase completed"
-                )
+                    Text(
+                        text = "Processing..."
+                    )
 
 
-            }
-
-
-
-            BotState.AwaitingPurchase -> {
-
-
-                Text(
-                    "Awaiting purchase"
-                )
-
-
-            }
-
-
-
-            BotState.Offline -> {
-
-
-                Text(
-                    "Offline"
-                )
+                }
 
 
             }
@@ -203,6 +221,5 @@ fun HomeScreen(
 
 
     }
-
 
 }
