@@ -1,6 +1,7 @@
 package com.mydgnbot.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HistoryToggleOff
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -30,7 +31,7 @@ fun BottomNavBar(
 
         BottomNavItem(
             "History",
-            Icons.Default.History
+            Icons.Default.HistoryToggleOff
         ),
 
         BottomNavItem(
