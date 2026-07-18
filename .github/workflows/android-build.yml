@@ -8,6 +8,7 @@ on:
   push:
 
     branches:
+
       - main
 
 
@@ -24,13 +25,13 @@ jobs:
     steps:
 
 
-      - name: Checkout repository
+      - name: Checkout
 
         uses: actions/checkout@v4
 
 
 
-      - name: Setup Java 17
+      - name: Setup Java
 
         uses: actions/setup-java@v5
 
@@ -52,11 +53,9 @@ jobs:
 
 
 
-      - name: Build Debug APK
+      - name: Build APK
 
-        run: |
-
-          gradle assembleDebug
+        run: gradle :app:assembleDebug
 
 
 
