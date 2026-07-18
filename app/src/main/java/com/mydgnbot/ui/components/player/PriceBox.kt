@@ -20,11 +20,21 @@ fun PriceBox(
 
     title: String,
 
-    price: String,
+    price: String = "",
+
+    value: String = "",
 
     modifier: Modifier = Modifier
 
 ) {
+
+
+    val displayPrice =
+        if (price.isNotEmpty())
+            price
+        else
+            value
+
 
 
     Card(
@@ -41,20 +51,14 @@ fun PriceBox(
         ) {
 
 
-            Text(
-                text = title
-            )
+            Text(title)
 
 
-            Text(
-                text = price
-            )
+            Text(displayPrice)
 
 
         }
 
-
     }
-
 
 }
