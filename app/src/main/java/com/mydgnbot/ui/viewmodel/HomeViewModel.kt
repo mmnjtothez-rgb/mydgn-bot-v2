@@ -1,51 +1,201 @@
 package com.mydgnbot.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mydgnbot.data.model.Player
+import com.mydgnbot.data.repository.MyDGNRepository
+import com.mydgnbot.data.settings.SettingsRepository
+import com.mydgnbot.data.security.HashGenerator
+import com.mydgnbot.domain.BotState
+import com.mydgnbot.ui.state.HomeUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.mydgnbot.data.model.Player
-import com.mydgnbot.domain.BotState
-import com.mydgnbot.ui.state.HomeUiState
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        HomeUiState()
-    )
+class HomeViewModel(
+    private val repository: MyDGNRepository,
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
+
+
+    private val _uiState =
+        MutableStateFlow(
+            HomeUiState()
+        )
+
 
     val uiState: StateFlow<HomeUiState> =
         _uiState.asStateFlow()
 
+
+
+    private var botJob: Job? = null
+
+
+
     fun startBot() {
 
-        _uiState.value = _uiState.value.copy(
-            botState = BotState.Monitoring
-        )
+
+        if (botJob != null) return
+
+
+        _uiState.value =
+            _uiState.value.copy(
+                botState = BotState.Monitoring
+            )
+
+
+        botJob =
+            viewModelScope.launch {
+
+
+                val settings =
+                    settingsRepository.settings.first()
+
+
+                fetchPlayer(settings)
+
+            }
 
     }
+
+
+
+    private suspend fun fetchPlayer(
+        settings: com.mydgnbot.data.model.UserSettings
+    ) {
+
+
+        _uiState.value =
+            _uiState.value.copy(
+                botState = BotState.Searching
+            )
+
+
+        val timestamp =
+            System.currentTimeMillis() / 1000
+
+
+        val hash =
+            HashGenerator.createHash(
+                platform = settings.platform,
+                user = settings.apiUser,
+                timestamp = timestamp,
+                secretKey = settings.secretKey
+            )
+
+
+        val result =
+            repository.getTransfer(
+
+                user = settings.apiUser,
+
+                platform = settings.platform,
+
+                timestamp = timestamp,
+
+                hash = hash,
+
+                maximumBuyOutPrice =
+                    settings.maxBuyPrice,
+
+                minimumBuyOutPrice =
+                    settings.minBuyPrice,
+
+                botApp =
+                    settings.botApp,
+
+                playerType =
+                    settings.playerType
+            )
+
+
+
+        result.onSuccess { player ->
+
+            playerFound(player)
+
+        }
+
+
+
+        result.onFailure {
+
+
+            _uiState.value =
+                _uiState.value.copy(
+                    botState =
+                        BotState.Monitoring
+                )
+
+        }
+
+    }
+
+
 
     fun stopBot() {
 
-        _uiState.value = HomeUiState()
+
+        botJob?.cancel()
+
+        botJob = null
+
+
+        _uiState.value =
+            HomeUiState()
 
     }
 
-    fun playerFound(player: Player) {
 
-        _uiState.value = _uiState.value.copy(
-            botState = BotState.PlayerFound,
-            currentPlayer = player
-        )
+
+    fun playerFound(
+        player: Player
+    ) {
+
+
+        _uiState.value =
+            _uiState.value.copy(
+
+                botState =
+                    BotState.PlayerFound(
+                        player.playerName
+                    ),
+
+                currentPlayer =
+                    player
+            )
 
     }
+
+
 
     fun purchaseCompleted() {
 
-        _uiState.value = _uiState.value.copy(
-            botState = BotState.Monitoring,
-            currentPlayer = null
-        )
+
+        _uiState.value =
+            _uiState.value.copy(
+
+                botState =
+                    BotState.Monitoring,
+
+                currentPlayer = null
+
+            )
+
+    }
+
+
+
+    override fun onCleared() {
+
+        botJob?.cancel()
+
+        super.onCleared()
 
     }
 
