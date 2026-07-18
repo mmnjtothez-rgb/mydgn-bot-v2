@@ -13,7 +13,7 @@ fun InfoChip(
     value: String = ""
 ) {
 
-    val label = when {
+    val displayText = when {
         text.isNotEmpty() -> text
         title.isNotEmpty() && value.isNotEmpty() -> "$title: $value"
         title.isNotEmpty() -> title
@@ -23,13 +23,9 @@ fun InfoChip(
 
 
     AssistChip(
-
         onClick = {},
-
         label = {
-            Text(label)
+            Text(displayText)
         }
-
     )
-
 }
