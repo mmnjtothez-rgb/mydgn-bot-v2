@@ -7,39 +7,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 
-
 @Composable
 fun InfoChip(
-
     text: String = "",
-
     title: String = "",
-
     value: String = ""
-
 ) {
 
-
-    val displayText =
+    val label =
         when {
-
-            text.isNotEmpty() ->
-                text
-
-            title.isNotEmpty() && value.isNotEmpty() ->
+            text.isNotBlank() -> text
+            title.isNotBlank() && value.isNotBlank() ->
                 "$title $value"
-
-            title.isNotEmpty() ->
+            title.isNotBlank() ->
                 title
-
-            value.isNotEmpty() ->
+            value.isNotBlank() ->
                 value
-
             else ->
                 ""
-
         }
-
 
 
     AssistChip(
@@ -47,9 +33,7 @@ fun InfoChip(
         onClick = {},
 
         label = {
-
-            Text(displayText)
-
+            Text(label)
         }
 
     )
