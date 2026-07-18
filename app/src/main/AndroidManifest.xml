@@ -3,6 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+    <!-- Required for MyDGN API communication -->
     <uses-permission
         android:name="android.permission.INTERNET" />
 
@@ -29,12 +30,14 @@
 
             <intent-filter>
 
+
                 <action
                     android:name="android.intent.action.MAIN" />
 
 
                 <category
                     android:name="android.intent.category.LAUNCHER" />
+
 
             </intent-filter>
 
