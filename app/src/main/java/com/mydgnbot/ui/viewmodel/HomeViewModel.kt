@@ -3,12 +3,14 @@ package com.mydgnbot.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mydgnbot.data.model.Player
+import com.mydgnbot.data.model.UserSettings
 import com.mydgnbot.data.repository.MyDGNRepository
-import com.mydgnbot.data.settings.SettingsRepository
 import com.mydgnbot.data.security.HashGenerator
+import com.mydgnbot.data.settings.SettingsRepository
 import com.mydgnbot.domain.BotState
 import com.mydgnbot.ui.state.HomeUiState
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,12 +45,6 @@ class HomeViewModel(
         if (botJob != null) return
 
 
-        _uiState.value =
-            _uiState.value.copy(
-                botState = BotState.Monitoring
-            )
-
-
         botJob =
             viewModelScope.launch {
 
@@ -57,7 +53,34 @@ class HomeViewModel(
                     settingsRepository.settings.first()
 
 
-                fetchPlayer(settings)
+                _uiState.value =
+                    _uiState.value.copy(
+                        botState =
+                            BotState.Monitoring
+                    )
+
+
+                while (true) {
+
+
+                    fetchPlayer(settings)
+
+
+                    // User controlled interval
+                    delay(
+                        settings.pollingInterval
+                    )
+
+
+                    // If a player is waiting for action,
+                    // stop searching
+                    if (
+                        _uiState.value.currentPlayer != null
+                    ) {
+                        break
+                    }
+
+                }
 
             }
 
@@ -66,13 +89,14 @@ class HomeViewModel(
 
 
     private suspend fun fetchPlayer(
-        settings: com.mydgnbot.data.model.UserSettings
+        settings: UserSettings
     ) {
 
 
         _uiState.value =
             _uiState.value.copy(
-                botState = BotState.Searching
+                botState =
+                    BotState.Searching
             )
 
 
@@ -80,25 +104,40 @@ class HomeViewModel(
             System.currentTimeMillis() / 1000
 
 
+
         val hash =
             HashGenerator.createHash(
-                platform = settings.platform,
-                user = settings.apiUser,
-                timestamp = timestamp,
-                secretKey = settings.secretKey
+
+                platform =
+                    settings.platform,
+
+                user =
+                    settings.apiUser,
+
+                timestamp =
+                    timestamp,
+
+                secretKey =
+                    settings.secretKey
+
             )
+
 
 
         val result =
             repository.getTransfer(
 
-                user = settings.apiUser,
+                user =
+                    settings.apiUser,
 
-                platform = settings.platform,
+                platform =
+                    settings.platform,
 
-                timestamp = timestamp,
+                timestamp =
+                    timestamp,
 
-                hash = hash,
+                hash =
+                    hash,
 
                 maximumBuyOutPrice =
                     settings.maxBuyPrice,
@@ -111,13 +150,18 @@ class HomeViewModel(
 
                 playerType =
                     settings.playerType
+
             )
 
 
 
         result.onSuccess { player ->
 
-            playerFound(player)
+
+            playerFound(
+                player
+            )
+
 
         }
 
@@ -128,8 +172,10 @@ class HomeViewModel(
 
             _uiState.value =
                 _uiState.value.copy(
+
                     botState =
                         BotState.Monitoring
+
                 )
 
         }
@@ -168,7 +214,9 @@ class HomeViewModel(
 
                 currentPlayer =
                     player
+
             )
+
 
     }
 
@@ -183,9 +231,26 @@ class HomeViewModel(
                 botState =
                     BotState.Monitoring,
 
-                currentPlayer = null
+                currentPlayer =
+                    null
 
             )
+
+
+        restartMonitoring()
+
+    }
+
+
+
+    private fun restartMonitoring() {
+
+
+        if (botJob == null) {
+
+            startBot()
+
+        }
 
     }
 
@@ -193,7 +258,9 @@ class HomeViewModel(
 
     override fun onCleared() {
 
+
         botJob?.cancel()
+
 
         super.onCleared()
 
