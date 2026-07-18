@@ -2,6 +2,8 @@ package com.mydgnbot.data.api
 
 import com.mydgnbot.data.model.ApiPlayer
 import com.mydgnbot.data.model.StatusResponse
+import com.mydgnbot.data.model.StatusRequest
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -44,27 +46,10 @@ interface MyDGNApi {
     @POST("status")
     suspend fun updateStatus(
 
-        @Query("user")
-        user: String,
-
-        @Query("platform")
-        platform: String,
-
-        @Query("timestamp")
-        timestamp: Long,
-
-        @Query("hash")
-        hash: String,
-
-        @Query("transactionID")
-        transactionId: Int,
-
-        @Query("status")
-        status: String,
-
-        @Query("emailHash")
-        emailHash: String = ""
+        @Body
+        request: StatusRequest
 
     ): StatusResponse
+
 
 }
