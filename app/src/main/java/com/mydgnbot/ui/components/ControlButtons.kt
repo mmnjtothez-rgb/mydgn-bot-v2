@@ -1,53 +1,101 @@
 package com.mydgnbot.ui.components
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
+
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
 
 
 @Composable
 fun ControlButtons(
 
-    onStart: () -> Unit,
+    onBuyClick: () -> Unit = {},
 
-    onStop: () -> Unit
+    onRefreshClick: () -> Unit = {}
 
 ) {
 
 
     Row(
 
-        horizontalArrangement =
-        Arrangement.spacedBy(12)
+        modifier = Modifier
+
+            .fillMaxWidth()
+
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
+
+        horizontalArrangement = Arrangement.spacedBy(
+            12.dp
+        )
 
     ) {
 
 
-        OutlinedButton(
+        Button(
 
-            onClick = onStart
+            onClick = onBuyClick,
+
+            modifier = Modifier
+
+                .weight(1f)
+
+                .height(
+                    50.dp
+                ),
+
+            colors = ButtonDefaults.buttonColors()
 
         ) {
 
-            Text("▶ Start")
+
+            Text(
+                text = "Bought"
+            )
+
 
         }
 
 
 
-        OutlinedButton(
+        Button(
 
-            onClick = onStop
+            onClick = onRefreshClick,
+
+            modifier = Modifier
+
+                .weight(1f)
+
+                .height(
+                    50.dp
+                )
 
         ) {
 
-            Text("■ Stop")
+
+            Text(
+                text = "Refresh"
+            )
+
 
         }
 
 
     }
+
 
 }
