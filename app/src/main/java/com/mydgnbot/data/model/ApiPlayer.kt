@@ -1,59 +1,61 @@
 package com.mydgnbot.data.model
 
 
-data class Player(
+data class ApiPlayer(
 
-    val id: String,
+    val code: Int,
 
-    val name: String,
+    val transactionID: Int,
+
+    val tradeID: String,
+
+    val status: String,
+
+    val platform: String,
+
+
+    val assetID: Long,
+
+    val resourceID: Long,
+
+    val baseID: Long,
+
+
+    val playerName: String,
 
     val rating: Int,
 
-    val position: String,
+
+    val startPrice: Int,
+
+    val coinAmount: Int,
 
 
-    // Player identity
-    val nationality: String = "",
-
-    val nationalityFlag: String? = null,
-
-    val club: String = "",
+    val paymentInUsd: Double,
 
 
-    // Card information
-    val cardTitle: String = "",
-
-    val cardRarity: String = "",
+    val cardValue: Int,
 
 
-    // Market information
-    val chemistryStyle: String,
+    val ea_expires_at: Long,
+
 
     val owners: Int,
 
-    val marketTime: String,
+
+    val chemistry_style: String?,
 
 
-    val startingBid: Int,
+    // Optional enrichment fields
 
-    val buyNow: Int,
+    val nationality: String? = null,
 
+    val club: String? = null,
 
-    // Account/payment
-    val account: String,
+    val cardTitle: String? = null,
 
-    val payment: String,
+    val cardRarity: String? = null,
 
-    val transactionId: String,
-
-
-    // Prices
-    val myDgnPrice: String,
-
-    val futbinPrice: String? = null,
-
-
-    // Visual
     val imageUrl: String? = null
 
 )
