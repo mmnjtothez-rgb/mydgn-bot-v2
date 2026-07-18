@@ -20,7 +20,7 @@ fun PriceBox(
 
     title: String,
 
-    price: String,
+    value: String,
 
     modifier: Modifier = Modifier
 
@@ -41,20 +41,14 @@ fun PriceBox(
         ) {
 
 
-            Text(
-                text = title
-            )
+            Text(title)
 
 
-            Text(
-                text = price
-            )
+            Text(value)
 
 
         }
 
-
     }
-
 
 }
