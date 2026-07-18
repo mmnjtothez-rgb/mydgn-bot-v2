@@ -1,28 +1,19 @@
 package com.mydgnbot.domain
 
+enum class BotState {
 
-sealed class BotState {
+    Idle,
 
+    Monitoring,
 
-    object Stopped : BotState()
+    Loading,
 
+    PlayerFound,
 
-    object Starting : BotState()
+    Buying,
 
+    Completed,
 
-    object Monitoring : BotState()
-
-
-    object Searching : BotState()
-
-
-    data class PlayerFound(
-        val playerName: String
-    ) : BotState()
-
-
-    data class Error(
-        val message: String
-    ) : BotState()
+    Error
 
 }
