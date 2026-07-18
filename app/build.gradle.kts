@@ -5,81 +5,173 @@ plugins {
 }
 
 android {
+
     namespace = "com.mydgnbot"
+
     compileSdk = 36
 
     defaultConfig {
+
         applicationId = "com.mydgnbot"
+
         minSdk = 26
+
         targetSdk = 36
 
         versionCode = 1
-        versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        versionName = "1.0"
+
+        testInstrumentationRunner =
+            "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
+
     buildTypes {
-        debug {
-            isMinifyEnabled = false
-        }
 
         release {
+
             isMinifyEnabled = false
 
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
+                getDefaultProguardFile(
+                    "proguard-android-optimize.txt"
+                ),
                 "proguard-rules.pro"
             )
+
         }
+
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "2.2.0"
-    }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+
+        sourceCompatibility =
+            JavaVersion.VERSION_11
+
+        targetCompatibility =
+            JavaVersion.VERSION_11
+
     }
+
 
     kotlinOptions {
-        jvmTarget = "17"
+
+        jvmTarget = "11"
+
     }
 
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+
+    buildFeatures {
+
+        compose = true
+
     }
+
 }
+
 
 dependencies {
 
-    implementation(platform(libs.androidx.compose.bom))
 
-    implementation(libs.androidx.core.ktx)
+    // Android Core
+    implementation(
+        libs.androidx.core.ktx
+    )
 
-    implementation(libs.androidx.activity.compose)
+    implementation(
+        libs.androidx.lifecycle.runtime.ktx
+    )
 
-    implementation(libs.androidx.material3)
+    implementation(
+        libs.androidx.activity.compose
+    )
 
-    implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.androidx.lifecycle.runtime)
+    // Jetpack Compose
+    implementation(
+        platform(
+            libs.androidx.compose.bom
+        )
+    )
 
-    implementation(libs.retrofit)
+    implementation(
+        libs.androidx.ui
+    )
 
-    implementation(libs.okhttp)
+    implementation(
+        libs.androidx.ui.graphics
+    )
 
-    implementation(libs.coil)
+    implementation(
+        libs.androidx.ui.tooling.preview
+    )
 
-    implementation(libs.datastore)
+    implementation(
+        libs.androidx.material3
+    )
+
+
+    // ViewModel + Compose
+    implementation(
+        "androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2"
+    )
+
+
+    // Navigation
+    implementation(
+        "androidx.navigation:navigation-compose:2.9.2"
+    )
+
+
+    // Retrofit API
+    implementation(
+        "com.squareup.retrofit2:retrofit:2.11.0"
+    )
+
+    implementation(
+        "com.squareup.retrofit2:converter-gson:2.11.0"
+    )
+
+
+    // Coroutines
+    implementation(
+        "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"
+    )
+
+
+    // Testing
+    testImplementation(
+        libs.junit
+    )
+
+    androidTestImplementation(
+        libs.androidx.junit
+    )
+
+    androidTestImplementation(
+        libs.androidx.espresso.core
+    )
+
+    androidTestImplementation(
+        platform(
+            libs.androidx.compose.bom
+        )
+    )
+
+    androidTestImplementation(
+        libs.androidx.ui.test.junit4
+    )
+
+
+    debugImplementation(
+        libs.androidx.ui.tooling
+    )
+
+    debugImplementation(
+        libs.androidx.ui.test.manifest
+    )
+
 }
