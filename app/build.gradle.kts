@@ -24,7 +24,6 @@ android {
 
         testInstrumentationRunner =
             "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
 
@@ -40,9 +39,7 @@ android {
                 ),
                 "proguard-rules.pro"
             )
-
         }
-
     }
 
 
@@ -53,21 +50,18 @@ android {
 
         targetCompatibility =
             JavaVersion.VERSION_11
-
     }
 
 
     kotlinOptions {
 
         jvmTarget = "11"
-
     }
 
 
     buildFeatures {
 
         compose = true
-
     }
 
 }
@@ -90,7 +84,7 @@ dependencies {
     )
 
 
-    // Jetpack Compose
+    // Compose
     implementation(
         platform(
             libs.androidx.compose.bom
@@ -139,6 +133,18 @@ dependencies {
     // Coroutines
     implementation(
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"
+    )
+
+
+    // DataStore Settings
+    implementation(
+        "androidx.datastore:datastore-preferences:1.1.7"
+    )
+
+
+    // Security
+    implementation(
+        "androidx.security:security-crypto:1.1.0-alpha06"
     )
 
 
