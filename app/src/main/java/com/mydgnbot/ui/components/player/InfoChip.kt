@@ -13,6 +13,7 @@ fun InfoChip(
 
 ) {
 
+
     AssistChip(
 
         onClick = {},
@@ -24,5 +25,6 @@ fun InfoChip(
         }
 
     )
+
 
 }
