@@ -1,7 +1,8 @@
 package com.mydgnbot.data.model
 
-
 data class Player(
+
+    val id: String,
 
     val name: String,
 
@@ -9,15 +10,15 @@ data class Player(
 
     val position: String,
 
-    val startingBid: String,
-
-    val buyNow: String,
-
     val chemistryStyle: String,
 
     val owners: Int,
 
     val marketTime: String,
+
+    val startingBid: Int,
+
+    val buyNow: Int,
 
     val account: String,
 
@@ -25,6 +26,8 @@ data class Player(
 
     val transactionId: String,
 
-    val myDgnPrice: String
+    val myDgnPrice: String,
+
+    val imageUrl: String?
 
 )
