@@ -4,7 +4,15 @@ package com.mydgnbot.data.model
 data class ApiPlayer(
 
     val code: Int,
-
+    
+    val lockExpires: Long,
+    
+    val customerID: Int,
+    
+    val IsIcon: Int,
+    
+    val isAtMinPrice: Boolean
+    
     val transactionID: Int,
 
     val tradeID: String,
