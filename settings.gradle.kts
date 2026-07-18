@@ -16,7 +16,6 @@ pluginManagement {
 
 dependencyResolutionManagement {
 
-
     repositoriesMode.set(
         RepositoriesMode.FAIL_ON_PROJECT_REPOS
     )
@@ -24,15 +23,11 @@ dependencyResolutionManagement {
 
     repositories {
 
-
         google()
-
 
         mavenCentral()
 
-
     }
-
 
 }
 
@@ -40,7 +35,6 @@ dependencyResolutionManagement {
 
 rootProject.name =
     "MyDGNBot"
-
 
 
 include(":app")
