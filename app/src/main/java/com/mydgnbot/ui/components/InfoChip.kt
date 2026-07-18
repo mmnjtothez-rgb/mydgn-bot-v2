@@ -20,7 +20,6 @@ fun InfoChip(
 
         onClick = {},
 
-
         label = {
 
             Text(text)
