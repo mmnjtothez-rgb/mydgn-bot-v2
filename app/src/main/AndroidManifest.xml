@@ -3,21 +3,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <!-- Required for MyDGN API calls -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required for MyDGN API -->
+    <uses-permission
+        android:name="android.permission.INTERNET" />
 
 
     <application
 
-        android:name=".MyDGNBotApp"
+        android:name=".MyDGNApp"
 
         android:allowBackup="true"
 
         android:icon="@mipmap/ic_launcher"
 
-        android:label="@string/app_name"
-
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="MyDGN Bot"
 
         android:supportsRtl="true"
 
@@ -33,9 +32,14 @@
 
             <intent-filter>
 
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action
+                    android:name="android.intent.action.MAIN" />
+
+
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+
 
             </intent-filter>
 
