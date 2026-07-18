@@ -1,38 +1,34 @@
 package com.mydgnbot
 
+
 import android.os.Bundle
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+
+import androidx.compose.runtime.Composable
+
 import dagger.hilt.android.AndroidEntryPoint
+
 import com.mydgnbot.ui.navigation.AppNavigation
-import com.mydgnbot.ui.theme.MyDGNBotTheme
+import com.mydgnbot.ui.theme.MyDGNTheme
+
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
 
-        super.onCreate(
-            savedInstanceState
-        )
-
-
-        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
 
 
         setContent {
 
-
             MyDGNTheme {
 
-
                 AppNavigation()
-
 
             }
 
