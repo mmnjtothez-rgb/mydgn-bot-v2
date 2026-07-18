@@ -1,17 +1,26 @@
 package com.mydgnbot.ui.navigation
 
+
 import androidx.compose.runtime.Composable
+
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
+import com.mydgnbot.ui.screens.HomeRoute
+
+
 
 sealed class Screen(
+
     val route: String
+
 ) {
+
 
     data object Home :
         Screen("home")
+
 
 }
 
@@ -30,15 +39,15 @@ fun AppNavigation() {
 
         navController = navController,
 
-        startDestination =
-            Screen.Home.route
+        startDestination = Screen.Home.route
 
     ) {
 
 
-
         composable(
+
             route = Screen.Home.route
+
         ) {
 
 
