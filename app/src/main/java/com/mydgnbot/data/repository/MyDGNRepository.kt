@@ -5,9 +5,14 @@ import com.mydgnbot.data.model.ApiPlayer
 import com.mydgnbot.data.model.Player
 import com.mydgnbot.data.model.toPlayer
 
+
 class MyDGNRepository {
 
-    private val api = RetrofitClient.api
+
+    private val api =
+        RetrofitClient.api
+
+
 
     suspend fun getTransfer(
         user: String,
@@ -20,59 +25,113 @@ class MyDGNRepository {
         playerType: Int
     ): Result<Player> {
 
+
         return try {
 
-            val response: ApiPlayer = api.getTransfer(
-                user = user,
-                platform = platform,
-                timestamp = timestamp,
-                hash = hash,
-                maximumBuyOutPrice = maximumBuyOutPrice,
-                minimumBuyOutPrice = minimumBuyOutPrice,
-                botApp = botApp,
-                playerType = playerType
+
+            val response =
+                api.getTransfer(
+
+                    user = user,
+
+                    platform = platform,
+
+                    timestamp = timestamp,
+
+                    hash = hash,
+
+                    maximumBuyOutPrice =
+                        maximumBuyOutPrice,
+
+                    minimumBuyOutPrice =
+                        minimumBuyOutPrice,
+
+                    botApp = botApp,
+
+                    playerType = playerType
+
+                )
+
+
+            Result.success(
+                response.toPlayer()
             )
 
-            Result.success(response.toPlayer())
 
         } catch (e: Exception) {
 
-            Result.failure(e)
+
+            Result.failure(
+                e
+            )
 
         }
+
     }
 
-    suspend fun bought(
+
+
+    suspend fun updateStatus(
         user: String,
         platform: String,
         timestamp: Long,
         hash: String,
         transactionId: Int,
-        emailHash: String
-    ) = api.updateStatus(
-        user = user,
-        platform = platform,
-        timestamp = timestamp,
-        hash = hash,
-        transactionId = transactionId,
-        status = "bought",
-        emailHash = emailHash
-    )
+        status: String,
+        emailHash: String,
+        code: Int? = null
+    ): Result<Boolean> {
 
-    suspend fun cancel(
-        user: String,
-        platform: String,
-        timestamp: Long,
-        hash: String,
-        transactionId: Int
-    ) = api.updateStatus(
-        user = user,
-        platform = platform,
-        timestamp = timestamp,
-        hash = hash,
-        transactionId = transactionId,
-        status = "cancel",
-        emailHash = ""
-    )
+
+        return try {
+
+
+            val response =
+                api.updateStatus(
+
+                    user = user,
+
+                    platform = platform,
+
+                    timestamp = timestamp,
+
+                    hash = hash,
+
+                    transactionId = transactionId,
+
+                    status = status,
+
+                    emailHash = emailHash,
+
+                    code = code
+
+                )
+
+
+            if (response.code == 200) {
+
+                Result.success(true)
+
+            } else {
+
+                Result.failure(
+                    Exception(
+                        "Status update failed"
+                    )
+                )
+
+            }
+
+
+        } catch (e: Exception) {
+
+
+            Result.failure(
+                e
+            )
+
+        }
+
+    }
 
 }
