@@ -1,39 +1,37 @@
 package com.mydgnbot.ui.components
 
-import androidx.compose.material.icons.Icons
+
 import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
+
 import androidx.compose.material3.*
+
 import androidx.compose.runtime.Composable
+
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
 
 
 @Composable
-fun MyDGNDrawer(
-    onNavigate: (String) -> Unit
-) {
+fun MyDGNDrawer() {
+
 
     ModalDrawerSheet {
-
-        Text(
-            text = "MyDGN Bot",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = androidx.compose.ui.Modifier
-                .padding(20.dp)
-        )
 
 
         NavigationDrawerItem(
 
             label = {
-                Text("Live Player")
+                Text("Home")
             },
 
             selected = true,
 
-            onClick = {
-                onNavigate("home")
-            },
+            onClick = {},
 
             icon = {
 
@@ -42,9 +40,14 @@ fun MyDGNDrawer(
                     null
                 )
 
-            }
+            },
+
+            modifier = Modifier.padding(
+                12.dp
+            )
 
         )
+
 
 
         NavigationDrawerItem(
@@ -55,20 +58,23 @@ fun MyDGNDrawer(
 
             selected = false,
 
-            onClick = {
-                onNavigate("history")
-            },
+            onClick = {},
 
             icon = {
 
                 Icon(
-                    Icons.Default.History,
+                    Icons.Default.Refresh,
                     null
                 )
 
-            }
+            },
+
+            modifier = Modifier.padding(
+                12.dp
+            )
 
         )
+
 
 
         NavigationDrawerItem(
@@ -79,9 +85,7 @@ fun MyDGNDrawer(
 
             selected = false,
 
-            onClick = {
-                onNavigate("settings")
-            },
+            onClick = {},
 
             icon = {
 
@@ -90,7 +94,11 @@ fun MyDGNDrawer(
                     null
                 )
 
-            }
+            },
+
+            modifier = Modifier.padding(
+                12.dp
+            )
 
         )
 
