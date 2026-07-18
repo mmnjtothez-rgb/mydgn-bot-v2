@@ -2,25 +2,19 @@ package com.mydgnbot.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mydgnbot.data.model.Player
-import com.mydgnbot.data.model.UserSettings
 import com.mydgnbot.data.repository.MyDGNRepository
-import com.mydgnbot.data.security.HashGenerator
-import com.mydgnbot.data.settings.SettingsRepository
 import com.mydgnbot.domain.BotState
+import com.mydgnbot.domain.manager.CountdownManager
 import com.mydgnbot.ui.state.HomeUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
 class HomeViewModel(
     private val repository: MyDGNRepository,
-    private val settingsRepository: SettingsRepository
+    private val countdownManager: CountdownManager
 ) : ViewModel() {
 
 
@@ -29,57 +23,157 @@ class HomeViewModel(
             HomeUiState()
         )
 
-
     val uiState: StateFlow<HomeUiState> =
         _uiState.asStateFlow()
 
 
 
-    private var botJob: Job? = null
+    private var monitoringJob: Job? = null
 
 
 
-    fun startBot() {
+    init {
+
+        observeCountdown()
+
+    }
 
 
-        if (botJob != null) return
 
+    private fun observeCountdown() {
 
-        botJob =
-            viewModelScope.launch {
+        viewModelScope.launch {
 
+            countdownManager.state
+                .collect { countdown ->
 
-                val settings =
-                    settingsRepository.settings.first()
+                    _uiState.update {
 
-
-                _uiState.value =
-                    _uiState.value.copy(
-                        botState =
-                            BotState.Monitoring
-                    )
-
-
-                while (true) {
-
-
-                    fetchPlayer(settings)
-
-
-                    delay(
-                        settings.pollingInterval
-                    )
-
-
-                    if (
-                        _uiState.value.currentPlayer != null
-                    ) {
-
-                        break
+                        it.copy(
+                            countdown = countdown
+                        )
 
                     }
 
                 }
+
+        }
+
+    }
+
+
+
+
+    fun startBot(
+        platform: String
+    ) {
+
+        if (monitoringJob != null)
+            return
+
+
+        _uiState.update {
+
+            it.copy(
+                botState = BotState.Monitoring,
+                errorMessage = null
+            )
+
+        }
+
+
+
+        monitoringJob =
+            viewModelScope.launch {
+
+
+                while(true) {
+
+
+                    try {
+
+
+                        _uiState.update {
+
+                            it.copy(
+                                isLoading = true
+                            )
+
+                        }
+
+
+
+                        val player =
+                            repository.findPlayer(
+                                platform
+                            )
+
+
+
+                        if(player != null) {
+
+
+                            _uiState.update {
+
+                                it.copy(
+
+                                    botState =
+                                        BotState.PlayerFound,
+
+                                    currentPlayer =
+                                        player,
+
+                                    isLoading =
+                                        false
+
+                                )
+
+                            }
+
+
+
+                            countdownManager.start(
+                                seconds = 300
+                            )
+
+
+
+                            break
+
+                        }
+
+
+
+                    }
+                    catch(e: Exception) {
+
+
+                        _uiState.update {
+
+                            it.copy(
+
+                                botState =
+                                    BotState.Error,
+
+                                errorMessage =
+                                    e.message,
+
+                                isLoading =
+                                    false
+
+                            )
+
+                        }
+
+
+                    }
+
+
+
+                    delay(10000)
+
+                }
+
 
             }
 
@@ -87,194 +181,16 @@ class HomeViewModel(
 
 
 
-    private suspend fun fetchPlayer(
-        settings: UserSettings
-    ) {
-
-
-        _uiState.value =
-            _uiState.value.copy(
-                botState =
-                    BotState.Searching
-            )
-
-
-        val timestamp =
-            System.currentTimeMillis() / 1000
-
-
-
-        val hash =
-            HashGenerator.createHash(
-
-                platform =
-                    settings.platform,
-
-                user =
-                    settings.apiUser,
-
-                timestamp =
-                    timestamp,
-
-                secretKey =
-                    settings.secretKey
-
-            )
-
-
-
-        repository.getTransfer(
-
-            user =
-                settings.apiUser,
-
-            platform =
-                settings.platform,
-
-            timestamp =
-                timestamp,
-
-            hash =
-                hash,
-
-            maximumBuyOutPrice =
-                settings.maxBuyPrice,
-
-            minimumBuyOutPrice =
-                settings.minBuyPrice,
-
-            botApp =
-                settings.botApp,
-
-            playerType =
-                settings.playerType
-
-        )
-        .onSuccess {
-
-            playerFound(it)
-
-        }
-        .onFailure {
-
-            _uiState.value =
-                _uiState.value.copy(
-                    botState =
-                        BotState.Monitoring
-                )
-
-        }
-
-    }
-
-
-
-    fun markAsBought() {
-
-
-        sendStatus(
-            status = "bought"
-        )
-
-    }
-
-
-
-    fun cancelPlayer() {
-
-
-        sendStatus(
-            status = "cancel"
-        )
-
-    }
-
-
-
-    private fun sendStatus(
-        status: String
-    ) {
-
-
-        val player =
-            _uiState.value.currentPlayer
-                ?: return
-
-
-
-        viewModelScope.launch {
-
-
-            val settings =
-                settingsRepository.settings.first()
-
-
-
-            val timestamp =
-                System.currentTimeMillis() / 1000
-
-
-
-            val hash =
-                HashGenerator.createHash(
-
-                    platform =
-                        settings.platform,
-
-                    user =
-                        settings.apiUser,
-
-                    timestamp =
-                        timestamp,
-
-                    secretKey =
-                        settings.secretKey
-
-                )
-
-
-
-            repository.updateStatus(
-
-                user =
-                    settings.apiUser,
-
-                platform =
-                    settings.platform,
-
-                timestamp =
-                    timestamp,
-
-                hash =
-                    hash,
-
-                transactionId =
-                    player.transactionId.toInt(),
-
-                status =
-                    status,
-
-                emailHash =
-                    settings.emailHash
-
-            )
-
-
-
-            purchaseCompleted()
-
-        }
-
-    }
-
 
 
     fun stopBot() {
 
+        monitoringJob?.cancel()
 
-        botJob?.cancel()
+        monitoringJob = null
 
-        botJob = null
+
+        countdownManager.stop()
 
 
         _uiState.value =
@@ -284,57 +200,73 @@ class HomeViewModel(
 
 
 
-    private fun playerFound(
-        player: Player
-    ) {
-
-
-        _uiState.value =
-            _uiState.value.copy(
-
-                botState =
-                    BotState.PlayerFound(
-                        player.name
-                    ),
-
-                currentPlayer =
-                    player
-
-            )
-
-    }
 
 
 
-    private fun purchaseCompleted() {
+    fun playerBought() {
 
 
-        _uiState.value =
-            _uiState.value.copy(
+        countdownManager.stop()
+
+
+        _uiState.update {
+
+
+            it.copy(
 
                 botState =
-                    BotState.Monitoring,
+                    BotState.Completed,
 
                 currentPlayer =
                     null
 
             )
 
+        }
 
-        restartMonitoring()
+
+        resumeMonitoring()
 
     }
 
 
 
-    private fun restartMonitoring() {
 
 
-        if (botJob == null) {
 
-            startBot()
+    fun cancelPlayer() {
+
+
+        countdownManager.stop()
+
+
+        _uiState.update {
+
+
+            it.copy(
+
+                currentPlayer =
+                    null,
+
+                botState =
+                    BotState.Monitoring
+
+            )
 
         }
+
+
+        resumeMonitoring()
+
+    }
+
+
+
+
+
+    private fun resumeMonitoring() {
+
+        monitoringJob = null
 
     }
 
@@ -342,10 +274,11 @@ class HomeViewModel(
 
     override fun onCleared() {
 
-
-        botJob?.cancel()
-
         super.onCleared()
+
+        monitoringJob?.cancel()
+
+        countdownManager.stop()
 
     }
 
