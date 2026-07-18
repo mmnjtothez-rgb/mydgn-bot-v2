@@ -1,7 +1,9 @@
 package com.mydgnbot.ui.components
 
 
-import androidx.compose.material3.*
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
 
 
@@ -9,9 +11,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun InfoChip(
 
-    title: String,
-
-    value: String
+    text: String
 
 ) {
 
@@ -20,15 +20,13 @@ fun InfoChip(
 
         onClick = {},
 
+
         label = {
 
-            Text(
-                "$title: $value"
-            )
+            Text(text)
 
         }
 
     )
-
 
 }
