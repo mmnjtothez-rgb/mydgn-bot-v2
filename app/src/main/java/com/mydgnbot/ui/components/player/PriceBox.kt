@@ -34,3 +34,27 @@ fun PriceBox(
     ) {
 
 
+        Column(
+
+            modifier = Modifier.padding(12.dp)
+
+        ) {
+
+
+            Text(
+                text = title
+            )
+
+
+            Text(
+                text = price
+            )
+
+
+        }
+
+
+    }
+
+
+}
