@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
 
 
-            MyDGNBotTheme {
+            MyDGNTheme {
 
 
                 AppNavigation()
