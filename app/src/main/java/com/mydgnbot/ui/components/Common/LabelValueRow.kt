@@ -1,46 +1,53 @@
 package com.mydgnbot.ui.components.common
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.weight
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.mydgnbot.ui.theme.AppSpacing
+
 
 @Composable
 fun LabelValueRow(
+
     label: String,
+
     value: String,
+
     modifier: Modifier = Modifier
+
 ) {
 
+
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                vertical = AppSpacing.Small
-            )
+
+        modifier =
+            modifier.fillMaxWidth(),
+
+        horizontalArrangement =
+            Arrangement.SpaceBetween
+
     ) {
 
+
         Text(
+
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+
+            style =
+                MaterialTheme.typography.bodyMedium
+
         )
 
-        Spacer(
-            modifier = Modifier.weight(1f)
-        )
 
         Text(
+
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
+
+            style =
+                MaterialTheme.typography.bodyMedium
+
         )
+
 
     }
 
