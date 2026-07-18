@@ -1,5 +1,6 @@
-package com.mydgnbot.domain
+package com.mydgnbot.domain.manager
 
+import com.mydgnbot.domain.CountdownState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -7,48 +8,66 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class CountdownManager {
 
-    private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.Main
-    )
+    private val scope =
+        CoroutineScope(
+            SupervisorJob() +
+            Dispatchers.Default
+        )
 
     private var countdownJob: Job? = null
 
-    private val _remainingSeconds =
-        MutableStateFlow(0L)
 
-    val remainingSeconds: StateFlow<Long> =
-        _remainingSeconds.asStateFlow()
+    private val _state =
+        MutableStateFlow(
+            CountdownState()
+        )
 
-    fun start(lockExpires: Long) {
+    val state: StateFlow<CountdownState> =
+        _state.asStateFlow()
+
+
+    fun start(seconds: Long) {
 
         stop()
 
-        countdownJob = scope.launch {
+        _state.value =
+            CountdownState(
+                totalSeconds = seconds,
+                remainingSeconds = seconds,
+                isRunning = true
+            )
 
-            while (isActive) {
 
-                val now =
-                    System.currentTimeMillis() / 1000
+        countdownJob =
+            scope.launch {
 
-                val remaining =
-                    (lockExpires - now).coerceAtLeast(0)
+                while (
+                    _state.value.remainingSeconds > 0
+                ) {
 
-                _remainingSeconds.value =
-                    remaining
+                    delay(1000)
 
-                if (remaining == 0L) {
+                    val current =
+                        _state.value.remainingSeconds
 
-                    break
+
+                    _state.value =
+                        _state.value.copy(
+                            remainingSeconds =
+                                current - 1
+                        )
 
                 }
 
-                delay(1000)
 
+                _state.value =
+                    _state.value.copy(
+                        isRunning = false
+                    )
             }
 
-        }
-
     }
+
 
     fun stop() {
 
@@ -56,8 +75,10 @@ class CountdownManager {
 
         countdownJob = null
 
-        _remainingSeconds.value = 0
+        _state.value =
+            CountdownState()
 
     }
+
 
 }
