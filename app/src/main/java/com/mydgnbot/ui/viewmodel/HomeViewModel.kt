@@ -66,18 +66,17 @@ class HomeViewModel(
                     fetchPlayer(settings)
 
 
-                    // User controlled interval
                     delay(
                         settings.pollingInterval
                     )
 
 
-                    // If a player is waiting for action,
-                    // stop searching
                     if (
                         _uiState.value.currentPlayer != null
                     ) {
+
                         break
+
                     }
 
                 }
@@ -124,8 +123,118 @@ class HomeViewModel(
 
 
 
-        val result =
-            repository.getTransfer(
+        repository.getTransfer(
+
+            user =
+                settings.apiUser,
+
+            platform =
+                settings.platform,
+
+            timestamp =
+                timestamp,
+
+            hash =
+                hash,
+
+            maximumBuyOutPrice =
+                settings.maxBuyPrice,
+
+            minimumBuyOutPrice =
+                settings.minBuyPrice,
+
+            botApp =
+                settings.botApp,
+
+            playerType =
+                settings.playerType
+
+        )
+        .onSuccess {
+
+            playerFound(it)
+
+        }
+        .onFailure {
+
+            _uiState.value =
+                _uiState.value.copy(
+                    botState =
+                        BotState.Monitoring
+                )
+
+        }
+
+    }
+
+
+
+    fun markAsBought() {
+
+
+        sendStatus(
+            status = "bought"
+        )
+
+    }
+
+
+
+    fun cancelPlayer() {
+
+
+        sendStatus(
+            status = "cancel"
+        )
+
+    }
+
+
+
+    private fun sendStatus(
+        status: String
+    ) {
+
+
+        val player =
+            _uiState.value.currentPlayer
+                ?: return
+
+
+
+        viewModelScope.launch {
+
+
+            val settings =
+                settingsRepository.settings.first()
+
+
+
+            val timestamp =
+                System.currentTimeMillis() / 1000
+
+
+
+            val hash =
+                HashGenerator.createHash(
+
+                    platform =
+                        settings.platform,
+
+                    user =
+                        settings.apiUser,
+
+                    timestamp =
+                        timestamp,
+
+                    secretKey =
+                        settings.secretKey
+
+                )
+
+
+
+            repository.updateStatus(
 
                 user =
                     settings.apiUser,
@@ -139,44 +248,20 @@ class HomeViewModel(
                 hash =
                     hash,
 
-                maximumBuyOutPrice =
-                    settings.maxBuyPrice,
+                transactionId =
+                    player.transactionId.toInt(),
 
-                minimumBuyOutPrice =
-                    settings.minBuyPrice,
+                status =
+                    status,
 
-                botApp =
-                    settings.botApp,
-
-                playerType =
-                    settings.playerType
+                emailHash =
+                    settings.emailHash
 
             )
 
 
 
-        result.onSuccess { player ->
-
-
-            playerFound(
-                player
-            )
-
-
-        }
-
-
-
-        result.onFailure {
-
-
-            _uiState.value =
-                _uiState.value.copy(
-
-                    botState =
-                        BotState.Monitoring
-
-                )
+            purchaseCompleted()
 
         }
 
@@ -199,7 +284,7 @@ class HomeViewModel(
 
 
 
-    fun playerFound(
+    private fun playerFound(
         player: Player
     ) {
 
@@ -209,7 +294,7 @@ class HomeViewModel(
 
                 botState =
                     BotState.PlayerFound(
-                        player.playerName
+                        player.name
                     ),
 
                 currentPlayer =
@@ -217,12 +302,11 @@ class HomeViewModel(
 
             )
 
-
     }
 
 
 
-    fun purchaseCompleted() {
+    private fun purchaseCompleted() {
 
 
         _uiState.value =
@@ -260,7 +344,6 @@ class HomeViewModel(
 
 
         botJob?.cancel()
-
 
         super.onCleared()
 
