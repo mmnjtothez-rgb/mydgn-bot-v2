@@ -5,80 +5,59 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mydgnbot.data.model.PreviewPlayer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mydgnbot.domain.BotState
-import com.mydgnbot.ui.components.PlayerCard
+import com.mydgnbot.ui.components.player.PlayerCard
 import com.mydgnbot.ui.viewmodel.HomeViewModel
 
 
 @Composable
 fun HomeScreen(
-
-    viewModel: HomeViewModel = viewModel()
-
+    viewModel: HomeViewModel
 ) {
 
 
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState
+        .collectAsStateWithLifecycle()
 
 
 
     Surface(
-
         modifier = Modifier.fillMaxSize()
-
     ) {
 
 
         Column(
-
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
 
             horizontalAlignment =
-            Alignment.CenterHorizontally
+                Alignment.CenterHorizontally
 
         ) {
 
 
-            when (uiState.botState) {
+
+            when(state.botState) {
+
 
 
                 BotState.Idle -> {
 
-
-                    Text(
-
-                        text = "Ready to monitor",
-
-                        style =
-                        MaterialTheme.typography.headlineSmall
-
-                    )
-
-
-                    Spacer(
-                        Modifier.height(32.dp)
-                    )
-
-
                     Button(
-
                         onClick = {
-
-                            viewModel.startBot()
-
+                            viewModel.startBot(
+                                platform = "pc"
+                            )
                         }
-
                     ) {
 
-                        Text("▶ Start Bot")
+                        Text(
+                            "Start Monitoring"
+                        )
 
                     }
-
 
                 }
 
@@ -86,85 +65,16 @@ fun HomeScreen(
 
                 BotState.Monitoring -> {
 
-
-                    Text(
-
-                        text = "🟢 Monitoring",
-
-                        style =
-                        MaterialTheme.typography.headlineSmall
-
-                    )
-
-
-                    Spacer(
-                        Modifier.height(40.dp)
-                    )
-
-
                     CircularProgressIndicator()
 
-
                     Spacer(
-                        Modifier.height(20.dp)
+                        Modifier.height(16.dp)
                     )
 
 
                     Text(
-
-                        text =
-                        "Searching for players...",
-
-                        style =
-                        MaterialTheme.typography.bodyLarge
-
+                        "Searching for players..."
                     )
-
-
-                    Spacer(
-                        Modifier.height(32.dp)
-                    )
-
-
-                    OutlinedButton(
-
-                        onClick = {
-
-                            viewModel.stopBot()
-
-                        }
-
-                    ) {
-
-                        Text("■ Stop Bot")
-
-                    }
-
-
-                    Spacer(
-                        Modifier.height(30.dp)
-                    )
-
-
-                    // Development only
-                    Button(
-
-                        onClick = {
-
-                            viewModel.playerFound(
-                                PreviewPlayer
-                            )
-
-                        }
-
-                    ) {
-
-                        Text(
-                            "Simulate Player Found"
-                        )
-
-                    }
-
 
                 }
 
@@ -173,28 +83,20 @@ fun HomeScreen(
                 BotState.PlayerFound -> {
 
 
-                    uiState.currentPlayer?.let { player ->
-
+                    state.currentPlayer?.let {
 
                         PlayerCard(
-
-                            player = player,
-
-                            onCancel = {
-
-                                viewModel.stopBot()
-
-                            },
-
+                            player = it,
+                            countdown = state.countdown,
 
                             onBought = {
+                                viewModel.playerBought()
+                            },
 
-                                viewModel.purchaseCompleted()
-
+                            onCancel = {
+                                viewModel.cancelPlayer()
                             }
-
                         )
-
 
                     }
 
@@ -203,13 +105,25 @@ fun HomeScreen(
 
 
 
-                else -> {
+                BotState.Error -> {
 
 
                     Text(
-                        text = "Processing..."
+                        text =
+                            state.errorMessage
+                                ?: "Unknown error"
                     )
 
+
+                }
+
+
+
+                else -> {
+
+                    Text(
+                        "Processing..."
+                    )
 
                 }
 
