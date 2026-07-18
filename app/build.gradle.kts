@@ -4,11 +4,11 @@ plugins {
 
     id("org.jetbrains.kotlin.android")
 
-    id("kotlin-kapt")
+    id("org.jetbrains.kotlin.plugin.compose")
 
     id("com.google.dagger.hilt.android")
 
-    id("org.jetbrains.kotlin.plugin.compose")
+    kotlin("kapt")
 
 }
 
@@ -35,11 +35,41 @@ android {
     }
 
 
+
+    buildTypes {
+
+        release {
+
+            isMinifyEnabled = false
+
+            proguardFiles(
+                getDefaultProguardFile(
+                    "proguard-android-optimize.txt"
+                ),
+                "proguard-rules.pro"
+            )
+
+        }
+
+
+        debug {
+
+            applicationIdSuffix = ".debug"
+
+            versionNameSuffix = "-debug"
+
+        }
+
+    }
+
+
+
     buildFeatures {
 
         compose = true
 
     }
+
 
 
     compileOptions {
@@ -51,6 +81,7 @@ android {
             JavaVersion.VERSION_17
 
     }
+
 
 
     kotlinOptions {
@@ -66,9 +97,9 @@ android {
 dependencies {
 
 
-    // -------------------------
+    // -----------------------
     // Android Core
-    // -------------------------
+    // -----------------------
 
     implementation(
         "androidx.core:core-ktx:1.15.0"
@@ -80,9 +111,10 @@ dependencies {
     )
 
 
-    // -------------------------
+
+    // -----------------------
     // Compose
-    // -------------------------
+    // -----------------------
 
     implementation(
         platform(
@@ -112,9 +144,19 @@ dependencies {
 
 
 
-    // -------------------------
+    // -----------------------
+    // Navigation
+    // -----------------------
+
+    implementation(
+        "androidx.navigation:navigation-compose:2.8.5"
+    )
+
+
+
+    // -----------------------
     // Lifecycle
-    // -------------------------
+    // -----------------------
 
     implementation(
         "androidx.lifecycle:lifecycle-runtime-compose:2.8.7"
@@ -127,19 +169,9 @@ dependencies {
 
 
 
-    // -------------------------
-    // Navigation
-    // -------------------------
-
-    implementation(
-        "androidx.navigation:navigation-compose:2.8.5"
-    )
-
-
-
-    // -------------------------
-    // Hilt Dependency Injection
-    // -------------------------
+    // -----------------------
+    // Hilt
+    // -----------------------
 
     implementation(
         "com.google.dagger:hilt-android:2.54"
@@ -157,9 +189,9 @@ dependencies {
 
 
 
-    // -------------------------
-    // Retrofit API
-    // -------------------------
+    // -----------------------
+    // Retrofit
+    // -----------------------
 
     implementation(
         "com.squareup.retrofit2:retrofit:2.11.0"
@@ -172,9 +204,9 @@ dependencies {
 
 
 
-    // -------------------------
+    // -----------------------
     // OkHttp
-    // -------------------------
+    // -----------------------
 
     implementation(
         "com.squareup.okhttp3:okhttp:4.12.0"
@@ -187,13 +219,12 @@ dependencies {
 
 
 
-    // -------------------------
+    // -----------------------
     // Coroutines
-    // -------------------------
+    // -----------------------
 
     implementation(
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1"
     )
-
 
 }
