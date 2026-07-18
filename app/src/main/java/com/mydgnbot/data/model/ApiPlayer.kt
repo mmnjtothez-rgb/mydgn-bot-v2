@@ -1,3 +1,6 @@
+package com.mydgnbot.data.model
+
+
 data class Player(
 
     val id: String,
@@ -8,34 +11,49 @@ data class Player(
 
     val position: String,
 
-    val nationality: String,
 
-    val nationalityFlag: String?,
+    // Player identity
+    val nationality: String = "",
 
-    val club: String,
+    val nationalityFlag: String? = null,
 
-    val cardTitle: String,
+    val club: String = "",
 
-    val cardRarity: String,
 
+    // Card information
+    val cardTitle: String = "",
+
+    val cardRarity: String = "",
+
+
+    // Market information
     val chemistryStyle: String,
 
     val owners: Int,
 
     val marketTime: String,
 
+
     val startingBid: Int,
 
     val buyNow: Int,
 
+
+    // Account/payment
     val account: String,
 
     val payment: String,
 
     val transactionId: String,
 
+
+    // Prices
     val myDgnPrice: String,
 
-    val imageUrl: String?
+    val futbinPrice: String? = null,
+
+
+    // Visual
+    val imageUrl: String? = null
 
 )
