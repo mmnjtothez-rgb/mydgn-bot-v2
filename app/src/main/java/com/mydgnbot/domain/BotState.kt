@@ -4,21 +4,25 @@ package com.mydgnbot.domain
 sealed class BotState {
 
 
-    data object Idle : BotState()
+    object Stopped : BotState()
 
 
-    data object Monitoring : BotState()
+    object Starting : BotState()
 
 
-    data object PlayerFound : BotState()
+    object Monitoring : BotState()
 
 
-    data object AwaitingPurchase : BotState()
+    object Searching : BotState()
 
 
-    data object PurchaseCompleted : BotState()
+    data class PlayerFound(
+        val playerName: String
+    ) : BotState()
 
 
-    data object Offline : BotState()
+    data class Error(
+        val message: String
+    ) : BotState()
 
 }
