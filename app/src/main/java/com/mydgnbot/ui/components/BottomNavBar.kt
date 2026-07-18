@@ -1,77 +1,96 @@
 package com.mydgnbot.ui.components
 
+
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HistoryToggleOff
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+
 import androidx.compose.material3.*
+
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 
-
-data class BottomNavItem(
-    val label: String,
-    val icon: ImageVector
-)
 
 
 @Composable
-fun BottomNavBar(
-    selectedItem: String = "Live",
-    onItemSelected: (String) -> Unit
-) {
-
-    val items = listOf(
-
-        BottomNavItem(
-            "Live",
-            Icons.Default.Home
-        ),
-
-        BottomNavItem(
-            "History",
-            Icons.Default.HistoryToggleOff
-        ),
-
-        BottomNavItem(
-            "Settings",
-            Icons.Default.Settings
-        )
-
-    )
+fun BottomNavBar() {
 
 
     NavigationBar {
 
-        items.forEach { item ->
 
-            NavigationBarItem(
+        NavigationBarItem(
 
-                selected = selectedItem == item.label,
+            selected = true,
 
-                onClick = {
-                    onItemSelected(item.label)
-                },
+            onClick = {},
 
-                icon = {
+            icon = {
 
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.label
-                    )
+                Icon(
+                    Icons.Default.Home,
+                    contentDescription = "Home"
+                )
 
-                },
+            },
 
-                label = {
+            label = {
 
-                    Text(item.label)
+                Text("Home")
 
-                }
+            }
 
-            )
+        )
 
-        }
+
+
+        NavigationBarItem(
+
+            selected = false,
+
+            onClick = {},
+
+            icon = {
+
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = "History"
+                )
+
+            },
+
+            label = {
+
+                Text("History")
+
+            }
+
+        )
+
+
+
+        NavigationBarItem(
+
+            selected = false,
+
+            onClick = {},
+
+            icon = {
+
+                Icon(
+                    Icons.Default.Settings,
+                    contentDescription = "Settings"
+                )
+
+            },
+
+            label = {
+
+                Text("Settings")
+
+            }
+
+        )
 
     }
 
