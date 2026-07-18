@@ -2,7 +2,7 @@ package com.mydgnbot.ui.components
 
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Settings
 
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
@@ -29,7 +29,7 @@ fun WalletChip(
 
             Icon(
 
-                imageVector = Icons.Default.AccountBalance,
+                imageVector = Icons.Default.Settings,
 
                 contentDescription = "Wallet"
 
