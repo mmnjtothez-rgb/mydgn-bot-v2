@@ -8,7 +8,7 @@ import com.mydgnbot.ui.components.InfoChip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mydgnbot.data.model.Player
-import com.mydgnbot.ui.components.common.InfoChip
+import com.mydgnbot.ui.components.player.InfoChip
 import com.mydgnbot.ui.theme.AppSpacing
 
 
