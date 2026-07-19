@@ -1,84 +1,42 @@
 package com.mydgnbot.domain.manager
 
-import com.mydgnbot.domain.CountdownState
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CountdownManager {
+@Singleton
+class CountdownManager @Inject constructor() {
 
-    private val scope =
-        CoroutineScope(
-            SupervisorJob() +
-            Dispatchers.Default
-        )
+    private val _state = MutableStateFlow(0L)
+    val state: StateFlow<Long> = _state.asStateFlow()
 
-    private var countdownJob: Job? = null
-
-
-    private val _state =
-        MutableStateFlow(
-            CountdownState()
-        )
-
-    val state: StateFlow<CountdownState> =
-        _state.asStateFlow()
-
+    private var job: Job? = null
 
     fun start(seconds: Long) {
 
-        stop()
+        job?.cancel()
 
-        _state.value =
-            CountdownState(
-                totalSeconds = seconds,
-                remainingSeconds = seconds,
-                isRunning = true
-            )
+        job = CoroutineScope(Dispatchers.Default).launch {
 
+            var time = seconds
 
-        countdownJob =
-            scope.launch {
+            while (time >= 0) {
 
-                while (
-                    _state.value.remainingSeconds > 0
-                ) {
+                _state.value = time
 
-                    delay(1000)
+                delay(1000)
 
-                    val current =
-                        _state.value.remainingSeconds
-
-
-                    _state.value =
-                        _state.value.copy(
-                            remainingSeconds =
-                                current - 1
-                        )
-
-                }
-
-
-                _state.value =
-                    _state.value.copy(
-                        isRunning = false
-                    )
+                time--
             }
 
+        }
     }
-
 
     fun stop() {
-
-        countdownJob?.cancel()
-
-        countdownJob = null
-
-        _state.value =
-            CountdownState()
-
+        job?.cancel()
+        _state.value = 0
     }
-
-
 }
