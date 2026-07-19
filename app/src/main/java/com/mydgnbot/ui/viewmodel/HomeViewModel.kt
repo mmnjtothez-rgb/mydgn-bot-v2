@@ -6,280 +6,82 @@ import com.mydgnbot.data.repository.MyDGNRepository
 import com.mydgnbot.domain.BotState
 import com.mydgnbot.domain.manager.CountdownManager
 import com.mydgnbot.ui.state.HomeUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val repository: MyDGNRepository,
     private val countdownManager: CountdownManager
 ) : ViewModel() {
 
+    private val _uiState = MutableStateFlow(HomeUiState())
 
-    private val _uiState =
-        MutableStateFlow(
-            HomeUiState()
-        )
-
-    val uiState: StateFlow<HomeUiState> =
-        _uiState.asStateFlow()
-
-
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     private var monitoringJob: Job? = null
 
-
-
     init {
-
         observeCountdown()
-
     }
-
-
 
     private fun observeCountdown() {
-
         viewModelScope.launch {
-
-            countdownManager.state
-                .collect { countdown ->
-
-                    _uiState.update {
-
-                        it.copy(
-                            countdown = countdown
-                        )
-
-                    }
-
+            countdownManager.state.collect { countdown ->
+                _uiState.update {
+                    it.copy(
+                        countdown = countdown
+                    )
                 }
-
+            }
         }
-
     }
 
+    fun startBot(platform: String) {
 
-
-
-    fun startBot(
-        platform: String
-    ) {
-
-        if (monitoringJob != null)
-            return
-
+        if (monitoringJob != null) return
 
         _uiState.update {
-
             it.copy(
                 botState = BotState.Monitoring,
                 errorMessage = null
             )
-
         }
 
+        monitoringJob = viewModelScope.launch {
 
+            while (true) {
 
-        monitoringJob =
-            viewModelScope.launch {
+                try {
 
-
-                while(true) {
-
-
-                    try {
-
-
-                        _uiState.update {
-
-                            it.copy(
-                                isLoading = true
-                            )
-
-                        }
-
-
-
-                        val player =
-                            repository.findPlayer(
-                                platform
-                            )
-
-
-
-                        if(player != null) {
-
-
-                            _uiState.update {
-
-                                it.copy(
-
-                                    botState =
-                                        BotState.PlayerFound,
-
-                                    currentPlayer =
-                                        player,
-
-                                    isLoading =
-                                        false
-
-                                )
-
-                            }
-
-
-
-                            countdownManager.start(
-                                seconds = 300
-                            )
-
-
-
-                            break
-
-                        }
-
-
-
-                    }
-                    catch(e: Exception) {
-
-
-                        _uiState.update {
-
-                            it.copy(
-
-                                botState =
-                                    BotState.Error,
-
-                                errorMessage =
-                                    e.message,
-
-                                isLoading =
-                                    false
-
-                            )
-
-                        }
-
-
+                    _uiState.update {
+                        it.copy(
+                            isLoading = true
+                        )
                     }
 
+                    val player = repository.findPlayer(platform)
 
+                    if (player != null) {
 
-                    delay(10000)
+                        _uiState.update {
+                            it.copy(
+                                botState = BotState.PlayerFound,
+                                currentPlayer = player,
+                                isLoading = false
+                            )
+                        }
 
-                }
+                        countdownManager.start(seconds = 300)
 
+                        break
+                    }
 
-            }
-
-    }
-
-
-
-
-
-    fun stopBot() {
-
-        monitoringJob?.cancel()
-
-        monitoringJob = null
-
-
-        countdownManager.stop()
-
-
-        _uiState.value =
-            HomeUiState()
-
-    }
-
-
-
-
-
-
-    fun playerBought() {
-
-
-        countdownManager.stop()
-
-
-        _uiState.update {
-
-
-            it.copy(
-
-                botState =
-                    BotState.Completed,
-
-                currentPlayer =
-                    null
-
-            )
-
-        }
-
-
-        resumeMonitoring()
-
-    }
-
-
-
-
-
-
-    fun cancelPlayer() {
-
-
-        countdownManager.stop()
-
-
-        _uiState.update {
-
-
-            it.copy(
-
-                currentPlayer =
-                    null,
-
-                botState =
-                    BotState.Monitoring
-
-            )
-
-        }
-
-
-        resumeMonitoring()
-
-    }
-
-
-
-
-
-    private fun resumeMonitoring() {
-
-        monitoringJob = null
-
-    }
-
-
-
-    override fun onCleared() {
-
-        super.onCleared()
-
-        monitoringJob?.cancel()
-
-        countdownManager.stop()
-
-    }
-
-}
+                } catch (e: Exception
