@@ -5,50 +5,22 @@ import com.mydgnbot.data.model.Player
 import com.mydgnbot.data.model.toPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MyDGNRepository(
+class MyDGNRepository @Inject constructor(
     private val api: MyDGNApi
 ) {
 
-
-    suspend fun findPlayer(
-        platform: String
-    ): Player? {
-
-        return withContext(
-            Dispatchers.IO
-        ) {
-
-            val response =
-                api.getPlayers(
-                    platform = platform
-                )
-
-
-            response
+    suspend fun findPlayer(platform: String): Player? =
+        withContext(Dispatchers.IO) {
+            api.getPlayers(platform)
                 .firstOrNull()
                 ?.toPlayer()
-
         }
 
-    }
-
-
-    suspend fun checkPlayer(
-        transactionId: Int
-    ): Player? {
-
-        return withContext(
-            Dispatchers.IO
-        ) {
-
-            api.getPlayerStatus(
-                transactionId
-            )
-            .toPlayer()
-
+    suspend fun checkPlayer(transactionId: Int): Player? =
+        withContext(Dispatchers.IO) {
+            api.getPlayerStatus(transactionId)
+                .toPlayer()
         }
-
-    }
-
 }
